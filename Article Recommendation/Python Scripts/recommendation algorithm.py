@@ -17,7 +17,7 @@ n_calculator = 1
 # print group
 
 
-f = open("./output.txt", "w+")
+f = open("./output.csv", "w+")
 f.write("id,Title,Recommendation\n")
 
 
@@ -27,9 +27,7 @@ for index, row in pp.iterrows():
 
     try:
         group = grouped.get_group(row['Parent'])    # get the group with the same parent
-        group = group[group['id'] != row['id']] #remove current article from the group
-
-        group_length = len(group.index.values)
+        group_remain = group[group['id'] != row['id']] #remove current article from the group
 
         # calculate a list for affinity
         list_affinity = []
@@ -45,35 +43,37 @@ for index, row in pp.iterrows():
         if len(list_affinity) > n_affinity: # randomly choose n_affinity number of articles
             list_affinity = np.random.choice(list_affinity, n_affinity)
 
+        list_affinity = np.array(list_affinity)
+        group_remain = group_remain[~group_remain['id'].isin(list_affinity)]    # remove affinity from group_remain so it won't be included in list_popular and list_random
         
         # calculate a list for popular
-        group_remain = group[~group['id'].isin(list_affinity)]
-        group_remain = group_remain.sort_values('Visits', ascending = False)
+        list_popular = []
+        group_remain = group_remain.sort_values('Visits', ascending = False)    # sort group_remain by Visits to get the most popular pages
         group_remain_length = len(group_remain)
-        
-        list_remain = []
 
-        if group_remain_length < n_popular + n_random:#+n_affinity + n_calculator
+        if group_remain_length <= n_popular:
             list_popular = group_remain['id'].values
         else:
-            popular_index = group_remain.index.values[ : n_popular]
-            random_index = np.random.choice(group_remain.index.values[n_popular : ], n_random, replace = False)
+            list_popular = group_remain['id'].values[ : n_popular]
 
-            list_remain.append(popular_index.astype(int))
-            list_remain.append(random_index.astype(int))
-            # for idx in popular_index:
-            #     list_remain = 
+        group_remain = group_remain[~group_remain['id'].isin(list_popular)] # remove popular from group_remain so it won't be in list_random
 
-            # for idx in random_index:
-            #     recommendations += str(int(group[group.index == idx]['id'])) + ','
+        # calculate a list for random
+        list_random = []
+        group_remain_length = len(group_remain)
 
-        recommendations = str(np.array(list_affinity).astype(int)) + ','
-        for idx in list_remain:
-            recommendations += str(idx) + ','
-        # for idx in list_remain:
-        #     recommendations += str(idx) + ','
+        if group_remain_length <= n_random:
+            list_random = group_remain['id'].values
+        else:
+            list_random = np.random.choice(group_remain['id'].values, n_random, replace = False)
 
-        f.write('%s,"%s","%s"\n' % (str(int(row['id'])), row['Title'], recommendations[0 : -1]))
+        group_remain = group_remain[~group_remain['id'].isin(list_random)]
+
+
+        # write row to file
+        recommendations = str(list_affinity.astype(int)) + ',' + str(list_popular.astype(int)) + ',' + str(list_random.astype(int))
+
+        f.write('%s,"%s","%s"\n' % (str(int(row['id'])), row['Title'], recommendations))
     except KeyError as err:
         print 'Could not find parent for article id ' + str(int(row['id']))
         f.write('%s,"%s","Missing parent id"\n' % (str(int(row['id'])), row['Title']))
