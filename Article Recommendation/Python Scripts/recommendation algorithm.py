@@ -3,6 +3,7 @@ import numpy as np
 
 af = pd.read_csv("../Sample Data/Affinity.csv", header = None)
 pp = pd.read_csv("../Sample Data/Parent and Popularity.csv")
+ca = pd.read_csv("../Sample Data/Calculators.csv")
 grouped = pp.groupby('Parent')
 
 n_affinity = 4
@@ -69,9 +70,17 @@ for index, row in pp.iterrows():
 
         group_remain = group_remain[~group_remain['id'].isin(list_random)]
 
+        # pick calculator
+        list_calculator = []
+        calculator_group = ca[ca['Parent'] == row['Parent']]
+        
+        if len(calculator_group) <= n_calculator:
+            list_calculator = calculator_group['id'].values
+        else:
+            list_calculator = np.random.choice(calculator_group['id'].values, n_calculator, replace = False)
 
         # write row to file
-        recommendations = str(list_affinity.astype(int)) + ',' + str(list_popular.astype(int)) + ',' + str(list_random.astype(int))
+        recommendations = str(list_affinity.astype(int)) + ',' + str(list_popular.astype(int)) + ',' + str(list_random.astype(int)) + ',' + str(list_calculator.astype(int))
 
         f.write('%s,"%s","%s"\n' % (str(int(row['id'])), row['Title'], recommendations))
     except KeyError as err:
