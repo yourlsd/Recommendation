@@ -1,53 +1,81 @@
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv("C:/Users/slu/Desktop/Recommendation.csv")
-grouped = df.groupby('Parent')
-n_popular = 2
-n_random = 7
-#n_popular = 3
-#n_random = 1
-#n_affinity = 4
-#n_calculator = 1
+af = pd.read_csv("../Sample Data/Affinity.csv", header = None)
+pp = pd.read_csv("../Sample Data/Parent and Popularity.csv")
+grouped = pp.groupby('Parent')
+
+n_affinity = 4
+n_popular = 3
+n_random = 1
+n_calculator = 1
 
 
-group = grouped.get_group(25)
-affinity = [22542, 22558, 12345]
-print group[~group['id'].isin(affinity)]
+# group = grouped.get_group(27)
+# print group
+# group = group.sort_values('Visits', ascending = False)
+# print group
 
 
+f = open("./output.txt", "w+")
+f.write("id,Title,Recommendation\n")
 
-# f = open("C:/Users/slu/Desktop/output.txt", "w+")
-# f.write("id,Title,Recommendation\n")
 
+for index, row in pp.iterrows():
+    if np.isnan(row['id']):
+        continue
 
-# for index, row in df.iterrows():
-#     if np.isnan(row['id']):
-#         continue
+    try:
+        group = grouped.get_group(row['Parent'])    # get the group with the same parent
+        group = group[group['id'] != row['id']] #remove current article from the group
 
-#     i = 0
-#     try:
-#         group = grouped.get_group(row['Parent'])
-#         group = group[group['id'] != row['id']] #remove current article from the group
+        group_length = len(group.index.values)
 
-#         recommendations = ''
-#         group_length = len(group.index.values)
-#         if group_length < n_popular + n_random:#+n_affinity + n_calculator
-#             for id, recommendation in group.iterrows():
-#                 recommendations += str(int(recommendation['id'])) + ','
-#         else:
-#             popular_index = group.index.values[ : n_popular]
-#             random_index = np.random.choice(group.index.values[n_popular : ], n_random, replace = False)
+        # calculate a list for affinity
+        list_affinity = []
+        affinity = af[af[0] == row['id']]
+        if len(affinity) > 0:
+            line = affinity.iloc[0]
+            for i in range(1, len(line) - 1):
+                if np.isnan(line[i]):
+                    break
+                else:
+                    list_affinity.append(line[i])
 
-#             for idx in popular_index:
-#                 recommendations += str(int(group[group.index == idx]['id'])) + ','
+        if len(list_affinity) > n_affinity: # randomly choose n_affinity number of articles
+            list_affinity = np.random.choice(list_affinity, n_affinity)
 
-#             for idx in random_index:
-#                 recommendations += str(int(group[group.index == idx]['id'])) + ','
+        
+        # calculate a list for popular
+        group_remain = group[~group['id'].isin(list_affinity)]
+        group_remain = group_remain.sort_values('Visits', ascending = False)
+        group_remain_length = len(group_remain)
+        
+        list_remain = []
 
-#         f.write('%s,"%s","%s"\n' % (str(int(row['id'])), row['Title'], recommendations[0 : -1]))
-#     except KeyError as err:
-#         print 'Could not find parent for article id ' + str(int(row['id']))
-#         f.write('%s,"%s","Missing parent id"\n' % (str(int(row['id'])), row['Title']))
+        if group_remain_length < n_popular + n_random:#+n_affinity + n_calculator
+            list_popular = group_remain['id'].values
+        else:
+            popular_index = group_remain.index.values[ : n_popular]
+            random_index = np.random.choice(group_remain.index.values[n_popular : ], n_random, replace = False)
+
+            list_remain.append(popular_index.astype(int))
+            list_remain.append(random_index.astype(int))
+            # for idx in popular_index:
+            #     list_remain = 
+
+            # for idx in random_index:
+            #     recommendations += str(int(group[group.index == idx]['id'])) + ','
+
+        recommendations = str(np.array(list_affinity).astype(int)) + ','
+        for idx in list_remain:
+            recommendations += str(idx) + ','
+        # for idx in list_remain:
+        #     recommendations += str(idx) + ','
+
+        f.write('%s,"%s","%s"\n' % (str(int(row['id'])), row['Title'], recommendations[0 : -1]))
+    except KeyError as err:
+        print 'Could not find parent for article id ' + str(int(row['id']))
+        f.write('%s,"%s","Missing parent id"\n' % (str(int(row['id'])), row['Title']))
  
-# f.close()
+f.close()
