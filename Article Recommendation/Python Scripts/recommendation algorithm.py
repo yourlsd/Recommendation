@@ -6,6 +6,7 @@ pp = pd.read_csv("../Sample Data/Parent and Popularity.csv")
 ca = pd.read_csv("../Sample Data/Calculators.csv")
 grouped = pp.groupby('Parent')
 
+# n_total = 9
 n_affinity = 4
 n_popular = 3
 n_random = 1
@@ -59,17 +60,6 @@ for index, row in pp.iterrows():
 
         group_remain = group_remain[~group_remain['id'].isin(list_popular)] # remove popular from group_remain so it won't be in list_random
 
-        # calculate a list for random
-        list_random = []
-        group_remain_length = len(group_remain)
-
-        if group_remain_length <= n_random:
-            list_random = group_remain['id'].values
-        else:
-            list_random = np.random.choice(group_remain['id'].values, n_random, replace = False)
-
-        group_remain = group_remain[~group_remain['id'].isin(list_random)]
-
         # pick calculator
         list_calculator = []
         calculator_group = ca[ca['Parent'] == row['Parent']]
@@ -78,6 +68,18 @@ for index, row in pp.iterrows():
             list_calculator = calculator_group['id'].values
         else:
             list_calculator = np.random.choice(calculator_group['id'].values, n_calculator, replace = False)
+
+        # calculate a list for random
+        list_random = []
+        # n_random = n_total - len(list_affinity) - len(list_popular) - len(list_calculator)
+        group_remain_length = len(group_remain)
+
+        if group_remain_length <= n_random:
+            list_random = group_remain['id'].values
+        else:
+            list_random = np.random.choice(group_remain['id'].values, n_random, replace = False)
+
+        group_remain = group_remain[~group_remain['id'].isin(list_random)]
 
         # write row to file
         recommendations = str(list_affinity.astype(int)) + ',' + str(list_popular.astype(int)) + ',' + str(list_random.astype(int)) + ',' + str(list_calculator.astype(int))
