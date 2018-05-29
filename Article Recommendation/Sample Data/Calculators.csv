@@ -1,17 +1,21 @@
-id,Title,Parent,Parent Slug,Suggested parent/Note,Permalink
-3188,Mortgage Calculators,146,home/mortgage,,https://www.lendingtree.com/home/mortgage/calculators/
-3238,Auto Calculators,99,auto,,https://www.lendingtree.com/auto/calculators/
-3481,ARM Payment Calculator,146,home/mortgage,,https://www.lendingtree.com/home/mortgage/arm-payment-calculator/
-3671,Business Loan Calculator,129,business,,https://www.lendingtree.com/business/business-loan-calculator/
-3971,SBA Loan Calculator,8015,business/sba,,https://www.lendingtree.com/business/sba/calculator/
-9541,Student Loan Refinance Calculator,172,student/refinance,,https://www.lendingtree.com/student/refinance/calculator/
-10026,Debt Relief Calculator,138,debt-consolidation,,https://www.lendingtree.com/debt-consolidation/debt-relief-calculator/
-10029,Refinance Calculator,25,home,,https://www.lendingtree.com/home/refinance-calculator/
-12604,Debt Consolidation Calculator,164,personal,,https://www.lendingtree.com/personal/debt-consolidation-calculator/
-14672,Home Equity Loan Calculator,142,home/home-equity,,https://www.lendingtree.com/home/home-equity/calculator/
-14942,Boat Loan Calculator,1389,boat,,https://www.lendingtree.com/boat/calculator/
-14974,RV Loan Calculator,121,auto/rv,,https://www.lendingtree.com/auto/rv/calculator/
-14985,ATV Loan Calculator,117,auto/powersport,,https://www.lendingtree.com/auto/powersport/atv-loan-calculator/
-16165,Motorcycle Loan Calculator,113,auto/motorcycle,,https://www.lendingtree.com/auto/motorcycle/calculator/
-16338,Business Line of Credit Calculator,8022,business/line-of-credit,,https://www.lendingtree.com/business/line-of-credit/calculator/
-16413,Short Term Loan Calculator,8018,business/short-term,,https://www.lendingtree.com/business/short-term/calculator/
+id,Title,Parent,Parent Slug,Permalink
+3481,ARM Payment Calculator,146,home/mortgage,https://www.lendingtree.com/home/mortgage/arm-payment-calculator/
+3671,Business Loan Calculator,129,business,https://www.lendingtree.com/business/business-loan-calculator/
+3971,SBA Loan Calculator,8015,business/sba,https://www.lendingtree.com/business/sba/calculator/
+9541,Student Loan Refinance Calculator,172,student/refinance,https://www.lendingtree.com/student/refinance/calculator/
+10026,Debt Relief Calculator,138,debt-consolidation,https://www.lendingtree.com/debt-consolidation/debt-relief-calculator/
+10029,Refinance Calculator,25,home,https://www.lendingtree.com/home/refinance-calculator/
+12604,Debt Consolidation Calculator,164,personal,https://www.lendingtree.com/personal/debt-consolidation-calculator/
+14672,Home Equity Loan Calculator,142,home/home-equity,https://www.lendingtree.com/home/home-equity/calculator/
+14942,Boat Loan Calculator,1389,boat,https://www.lendingtree.com/boat/calculator/
+14974,RV Loan Calculator,121,auto/rv,https://www.lendingtree.com/auto/rv/calculator/
+14985,ATV Loan Calculator,117,auto/powersport,https://www.lendingtree.com/auto/powersport/atv-loan-calculator/
+16165,Motorcycle Loan Calculator,113,auto/motorcycle,https://www.lendingtree.com/auto/motorcycle/calculator/
+16338,Business Line of Credit Calculator,8022,business/line-of-credit,https://www.lendingtree.com/business/line-of-credit/calculator/
+16413,Short Term Loan Calculator,8018,business/short-term,https://www.lendingtree.com/business/short-term/calculator/
+20357,Mortgage Payment Calculator,3188,home/mortgage,https://www.lendingtree.com/home/mortgage/calculators/mortgage-payment/
+22182,Bad Habit Calculator,2208,info,https://www.lendingtree.com/info/bad-habit-calculator/
+26981,Auto Loan Calculator,3238,auto,https://www.lendingtree.com/auto/calculators/auto-loan/
+10996,Rate Table,146,home/mortgage/rates,https://www.lendingtree.com/home/mortgage/rate-table/
+16371,Rate Table Auto Refinance,25,home,https://www.lendingtree.com/home/rate-table-auto/
+26975,Rent Vs. Buy,3188,home/mortgage/calculators,https://www.lendingtree.com/home/mortgage/calculators/rent-vs-buy/
