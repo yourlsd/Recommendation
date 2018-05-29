@@ -28,4 +28,4 @@ TO BE UPDATED.
 
 The article recommendation algorithm consists of 4 parts:
 
-4 recomendations based on 
+4 recomendations based on Affinity
