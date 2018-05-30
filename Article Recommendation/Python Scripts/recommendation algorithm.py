@@ -7,9 +7,9 @@ ca = pd.read_csv("../Sample Data/Calculators.csv")
 grouped = pp.groupby('Parent')
 
 # n_total = 9
-n_affinity = 4
-n_popular = 3
-n_random = 1
+n_affinity = 3
+n_popular = 2
+n_random = 3
 n_calculator = 1
 
 
@@ -43,7 +43,7 @@ for index, row in pp.iterrows():
                     list_affinity.append(line[i])
 
         if len(list_affinity) > n_affinity: # randomly choose n_affinity number of articles
-            list_affinity = np.random.choice(list_affinity, n_affinity)
+            list_affinity = np.random.choice(list_affinity, n_affinity, replace = False)
 
         list_affinity = np.array(list_affinity)
         group_remain = group_remain[~group_remain['id'].isin(list_affinity)]    # remove affinity from group_remain so it won't be included in list_popular and list_random
