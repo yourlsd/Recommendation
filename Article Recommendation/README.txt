@@ -27,11 +27,12 @@ _yoast_wpseo_meta-robots-noindex = blank
 Template = template-article (except calculators)
 
 Taxonomy - parent changes:
-Home --> home/mortgage
-Bankruptcy --> credit-repair
-Boat --> auto/powersport
-Debt relief --> debt-consolidation
+home --> home/mortgage
+bankruptcy --> credit-repair
+boat --> auto/powersport
+debt-relief --> debt-consolidation
 home/usda --> home/mortgage
+home/usda/eligibility --> home/mortgage
 
 Select Visits,id,Title,Parent,Parent Slug columns from WP-Download 5-10 and 
 paste them to Parent and popylarity.
@@ -56,7 +57,7 @@ content similarity recommendations.
 is widely spread – eg. Each article appears at least once. If there are not enough siblings, 
 randomly select articles of the same grandparent
 
-2 popular or high conversion articles under the same parent, currently it’s not integrated well, 
+2 (or less) popular or high conversion articles under the same parent, currently it’s not integrated well, 
 but it might be good to use LT revenue, RPV, form conversion as the metrics in the future. 
 For now, use visits as the metric. In the future, can randomly select top 30% articles that 
 convert well.
