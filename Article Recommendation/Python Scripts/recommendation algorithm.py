@@ -20,9 +20,7 @@ n_calculator = 1
 secondary = []
 
 for index, row in pp.iterrows():
-    if row['Parent Slug'].find('/') == -1: 
-        secondary.append(row['Parent Slug'])
-    elif row['Parent Slug'] == 'boat':
+    if row['Parent Slug'] == 'boat':
         secondary.append('auto/powersport') 
     elif row['Parent Slug'] == 'home':
         secondary.append('home/mortgage') 
@@ -34,10 +32,13 @@ for index, row in pp.iterrows():
         secondary.append('home/mortgage')
     elif row['Parent Slug'] == 'home/usda/eligibility':
         secondary.append('home/mortgage')    
+    elif row['Parent Slug'].find('/') == -1: 
+        secondary.append(row['Parent Slug'])
     else:
         secondary.append(row['Parent Slug'].rpartition('/')[0])
 
 pp['secondary'] = secondary
+
 grouped = pp.groupby('Parent Slug')
 
 f = open("./output.csv", "w+")
@@ -107,7 +108,10 @@ for index, row in pp.iterrows():
         slist_random = []
         if n_random-len(plist_random) > 0:
             sgroup = grouped.get_group(row['secondary'])
-            sgroup_remain = sgroup[~sgroup['id'].isin(list_affinity)]
+            sgroup_remain = sgroup[sgroup['id'] != row['id']]
+            sgroup_remain = sgroup_remain[~sgroup_remain['id'].isin(list_affinity)]
+            sgroup_remain = sgroup_remain[~sgroup_remain['id'].isin(list_popular)]
+            sgroup_remain = sgroup_remain[~sgroup_remain['id'].isin(plist_random)]
 
             if n_random-len(plist_random) >= len(sgroup_remain): 
                 slist_random = sgroup_remain['id'].values
