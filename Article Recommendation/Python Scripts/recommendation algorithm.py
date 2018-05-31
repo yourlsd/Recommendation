@@ -38,9 +38,7 @@ for index, row in pp.iterrows():
         secondary.append(row['Parent Slug'].rpartition('/')[0])
 
 pp['secondary'] = secondary
-
-grouped = pp.groupby('Parent')
-sgrouped = pp.groupby('secondary')
+grouped = pp.groupby('Parent Slug')
 
 f = open("./output.csv", "w+")
 f.write("id,Title,Recommendation\n")
@@ -49,10 +47,8 @@ for index, row in pp.iterrows():
     if np.isnan(row['id']):
         continue
     try:
-        group = grouped.get_group(row['Parent'])    # get the group with the same parent
-        sgroup = sgrouped.get_group(row['secondary'])  # get the group with the same secondary
+        group = grouped.get_group(row['Parent Slug'])    # get the group with the same parent
         group_remain = group[group['id'] != row['id']] #remove current article from the group
-        sgroup_remain = sgroup[sgroup['id'] != row['id']] #remove current article from the sgroup
 
         # calculate a list for affinity
         list_affinity = []
@@ -72,7 +68,6 @@ for index, row in pp.iterrows():
 
         list_affinity = np.array(list_affinity)
         group_remain = group_remain[~group_remain['id'].isin(list_affinity)]    # remove affinity from group_remain so it won't be included in list_popular and list_random
-        sgroup_remain = sgroup_remain[~sgroup_remain['id'].isin(list_affinity)]    # remove affinity from sgroup_remain so it won't be included in list_popular and list_random
 
         # calculate a list for popular
         list_popular = []
@@ -85,7 +80,6 @@ for index, row in pp.iterrows():
             list_popular = group_remain['id'].values[ : n_popular]
 
         group_remain = group_remain[~group_remain['id'].isin(list_popular)] # remove popular from group_remain so it won't be in list_random
-        sgroup_remain = sgroup_remain[~sgroup_remain['id'].isin(list_popular)] # remove popular from sgroup_remain so it won't be in list_random
 
 
         # pick calculator
@@ -97,26 +91,33 @@ for index, row in pp.iterrows():
         else:
             list_calculator = np.random.choice(calculator_group['id'].values, n_calculator, replace = False)
 
-        # calculate a list for random
-        list_random = []
+        # calculate plist_random
         plist_random = []
-        slist_random = []
-
         n_random = n_total - len(list_affinity) - len(list_popular) - len(list_calculator)
         group_remain_length = len(group_remain)
 
         if group_remain_length <= n_random:
             plist_random = group_remain['id'].values
-            slist_random = np.random.choice(sgroup_remain['id'].values, n_random - group_remain_length, replace = False)
-            list_random = plist_random + slist_random
         else:
-            list_random = np.random.choice(group_remain['id'].values, n_random, replace = False)
+            plist_random = np.random.choice(group_remain['id'].values, n_random, replace = False)
 
-        group_remain = group_remain[~group_remain['id'].isin(list_random)]
-        sgroup_remain = sgroup_remain[~sgroup_remain['id'].isin(list_random)]
+        group_remain = group_remain[~group_remain['id'].isin(plist_random)]
+
+        #calculate slist_random
+        slist_random = []
+        if n_random-len(plist_random) > 0:
+            sgroup = grouped.get_group(row['secondary'])
+            sgroup_remain = sgroup[~sgroup['id'].isin(list_affinity)]
+
+            if n_random-len(plist_random) >= len(sgroup_remain): 
+                slist_random = sgroup_remain['id'].values
+            else:
+                slist_random = np.random.choice(sgroup_remain['id'].values, n_random - len(plist_random) , replace = False)
+            
+        slist_random = np.array(slist_random)
 
         # write row to file
-        recommendations = str(list_affinity.astype(int)) + ',' + str(list_popular.astype(int)) + ',' + str(list_random.astype(int)) + ',' + str(list_calculator.astype(int))
+        recommendations = str(list_affinity.astype(int)) + ',' + str(list_popular.astype(int)) + ',' + str(plist_random.astype(int)) + ',' + str(slist_random.astype(int)) + ',' + str(list_calculator.astype(int))
 
         f.write('%s,"%s","%s"\n' % (str(int(row['id'])), row['Title'], recommendations))
     except KeyError as err:
