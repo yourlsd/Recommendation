@@ -16,45 +16,31 @@ n_calculator = 1
 # print group
 # group = group.sort_values('Visits', ascending = False)
 # print group
-# pp.loc[pp['Parent Slug'] == 'boat', ['Parent Slug']] = 'auto/powersport'
-# pp.loc[pp['Parent Slug'] == 'home', ['Parent Slug']] = 'home/mortgage'
-# pp.loc[pp['Parent Slug'] == 'bankruptcy', ['Parent Slug']] = 'credit-repair'
-# pp.loc[pp['Parent Slug'] == 'debt-relief', ['Parent Slug']] = 'debt-consolidation'
-# print pp.head(10)
 
-grandparent = []
+secondary = []
 
 for index, row in pp.iterrows():
     if row['Parent Slug'].find('/') == -1: 
-        grandparent.append(row['Parent Slug'])
-    if row['Parent Slug'] == 'boat':
-        row['Parent Slug'] = 'auto/powersport'
-        grandparent.append('auto') 
+        secondary.append(row['Parent Slug'])
+    elif row['Parent Slug'] == 'boat':
+        secondary.append('auto/powersport') 
     elif row['Parent Slug'] == 'home':
-        row['Parent Slug'] = 'home/mortgage'
-        grandparent.append('home') 
+        secondary.append('home/mortgage') 
     elif row['Parent Slug'] == 'bankruptcy':
-        row['Parent Slug'] = 'credit-repair'
-        grandparent.append('credit-repair') 
+        secondary.append('credit-repair') 
     elif row['Parent Slug'] == 'debt-relief':
-        row['Parent Slug'] = 'debt-consolidation'
-        grandparent.append('debt-consolidation') 
+        secondary.append('debt-consolidation') 
     elif row['Parent Slug'] == 'home/usda':
-        row['Parent Slug'] = 'home/mortgage'
-        grandparent.append('home')
+        secondary.append('home/mortgage')
     elif row['Parent Slug'] == 'home/usda/eligibility':
-        row['Parent Slug'] = 'home/mortgage'
-        grandparent.append('home')    
+        secondary.append('home/mortgage')    
     else:
-        grandparent.append(row['Parent Slug'].rpartition('/')[0])
+        secondary.append(row['Parent Slug'].rpartition('/')[0])
 
-pp['grandparent'] = grandparent
-
-
+pp['secondary'] = secondary
 
 grouped = pp.groupby('Parent')
-ggrouped = pp.groupby('grandparent')
-print ggrouped.head()
+sgrouped = pp.groupby('secondary')
 
 f = open("./output.csv", "w+")
 f.write("id,Title,Recommendation\n")
@@ -64,10 +50,9 @@ for index, row in pp.iterrows():
         continue
     try:
         group = grouped.get_group(row['Parent'])    # get the group with the same parent
-        ggroup = ggrouped.get_group(row['grandparent'])  # get the group with the same grandparent
+        sgroup = sgrouped.get_group(row['secondary'])  # get the group with the same secondary
         group_remain = group[group['id'] != row['id']] #remove current article from the group
-        ggroup_remain = ggroup[ggroup['id'] != row['id']] #remove current article from the ggroup
-        #print(ggroup_remain)
+        sgroup_remain = sgroup[sgroup['id'] != row['id']] #remove current article from the sgroup
 
         # calculate a list for affinity
         list_affinity = []
@@ -87,7 +72,7 @@ for index, row in pp.iterrows():
 
         list_affinity = np.array(list_affinity)
         group_remain = group_remain[~group_remain['id'].isin(list_affinity)]    # remove affinity from group_remain so it won't be included in list_popular and list_random
-        ggroup_remain = ggroup_remain[~ggroup_remain['id'].isin(list_affinity)]    # remove affinity from ggroup_remain so it won't be included in list_popular and list_random
+        sgroup_remain = sgroup_remain[~sgroup_remain['id'].isin(list_affinity)]    # remove affinity from sgroup_remain so it won't be included in list_popular and list_random
 
         # calculate a list for popular
         list_popular = []
@@ -100,7 +85,7 @@ for index, row in pp.iterrows():
             list_popular = group_remain['id'].values[ : n_popular]
 
         group_remain = group_remain[~group_remain['id'].isin(list_popular)] # remove popular from group_remain so it won't be in list_random
-        ggroup_remain = ggroup_remain[~ggroup_remain['id'].isin(list_popular)] # remove popular from ggroup_remain so it won't be in list_random
+        sgroup_remain = sgroup_remain[~sgroup_remain['id'].isin(list_popular)] # remove popular from sgroup_remain so it won't be in list_random
 
 
         # pick calculator
@@ -115,20 +100,20 @@ for index, row in pp.iterrows():
         # calculate a list for random
         list_random = []
         plist_random = []
-        glist_random = []
+        slist_random = []
 
         n_random = n_total - len(list_affinity) - len(list_popular) - len(list_calculator)
         group_remain_length = len(group_remain)
 
         if group_remain_length <= n_random:
             plist_random = group_remain['id'].values
-            glist_random = np.random.choice(ggroup_remain['id'].values, n_random - group_remain_length)
-            list_random = plist_random + glist_random
+            slist_random = np.random.choice(sgroup_remain['id'].values, n_random - group_remain_length, replace = False)
+            list_random = plist_random + slist_random
         else:
             list_random = np.random.choice(group_remain['id'].values, n_random, replace = False)
 
         group_remain = group_remain[~group_remain['id'].isin(list_random)]
-        ggroup_remain = ggroup_remain[~ggroup_remain['id'].isin(list_random)]
+        sgroup_remain = sgroup_remain[~sgroup_remain['id'].isin(list_random)]
 
         # write row to file
         recommendations = str(list_affinity.astype(int)) + ',' + str(list_popular.astype(int)) + ',' + str(list_random.astype(int)) + ',' + str(list_calculator.astype(int))
