@@ -38,6 +38,7 @@ Specific calculators recommendation changed manually:
 2. ARM Payment Calculator( WP id 10996) --> Mortgage Payment Calculator (WP id 20357)
 Note: it's only changed in Excel output this time. Manually 
 3. Add Mortgage rates (WP id 5299) to calculators dataset
+Note: it's only changed in Excel output checking this time. 
 
 
 
@@ -75,8 +76,8 @@ others --> everything before the rightmost slash: eg. business/small --> busines
 but it might be good to use LT revenue, RPV, form conversion as the metrics in the future. 
 For now, use visits as the metric. In the future, can randomly select top 30% articles that 
 convert well.
-TO BE UPDATED.
 
+In version 1.0, select  
 A total of 9 recommendations for every page with no replication. 
 
 
