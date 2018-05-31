@@ -33,6 +33,11 @@ Template = template-article (except calculators)
 Select Visits,id,Title,Parent,Parent Slug columns from WP-Download 5-10 and 
 paste them to Parent and popylarity.
 
+Specific calculators recommendation changed manually:
+1. Rate table (WP id 3481) --> Mortgage rates (WP id 5299) 
+2. ARM Payment Calculator( WP id 10996) --> Mortgage Payment Calculator (WP id 20357)
+Note: it's only changed in Excel output this time. Manually 
+3. Add Mortgage rates (WP id 5299) to calculators dataset
 
 
 
