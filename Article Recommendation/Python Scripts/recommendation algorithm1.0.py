@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 
 af = pd.read_csv("../Sample Data/Affinity.csv", header = None)
-pp = pd.read_csv("../Sample Data/Parent and Popularity.csv")
-ca = pd.read_csv("../Sample Data/Calculators.csv")
+pp = pd.read_csv("../Sample Data/Parent and Popularity_6_1.csv")
+ca = pd.read_csv("../Sample Data/Calculators_6_1.csv")
 
 n_total = 9
 n_affinity = 3
