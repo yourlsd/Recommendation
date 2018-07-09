@@ -1,4 +1,5 @@
-# Article Recommendations
+# Article Recommendations 
+# Updated 7-9
 
 #-----------------------------------#
 #            Input Data             #
@@ -24,7 +25,7 @@ TO BE UPDATED.
 #-----------------------------------#
 #         Data Preprocessing        #
 #-----------------------------------#
-WP-Download 5-10:
+WP-Download 7-9:
 Filter: 1269 records left
 Exclude Date =-42, Parent ID =0
 _yoast_wpseo_meta-robots-noindex = blank

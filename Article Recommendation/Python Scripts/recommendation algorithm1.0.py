@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 
 af = pd.read_csv("../Sample Data/Affinity.csv", header = None)
-pp = pd.read_csv("../Sample Data/Parent and Popularity_6_1.csv")
-ca = pd.read_csv("../Sample Data/Calculators_6_1.csv")
+pp = pd.read_csv("../Sample Data/performance and parent7_9.csv")
+ca = pd.read_csv("../Sample Data/Calculators7_9.csv")
 
 n_total = 9
 n_affinity = 3
@@ -14,7 +14,7 @@ n_calculator = 1
 
 # group = grouped.get_group(27)
 # print group
-# group = group.sort_values('Visits', ascending = False)
+# group = group.sort_values('score', ascending = False)
 # print group
 
 secondary = []
@@ -74,7 +74,7 @@ for index, row in pp.iterrows():
 
         # calculate a list for popular
         list_popular = []
-        group_remain = group_remain.sort_values('Visits', ascending = False)    # sort group_remain by Visits to get the most popular pages
+        group_remain = group_remain.sort_values('score', ascending = False)    # sort group_remain by score to get the most popular pages
         group_remain_length = len(group_remain)
 
         if group_remain_length <= n_popular:
