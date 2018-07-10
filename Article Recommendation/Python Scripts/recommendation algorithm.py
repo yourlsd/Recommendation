@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 
 af = pd.read_csv("../Sample Data/Affinity.csv", header = None)
-pp = pd.read_csv("../Sample Data/Parent and Popularity.csv")
-ca = pd.read_csv("../Sample Data/Calculators.csv")
+pp = pd.read_csv("../Sample Data/performance and parent7_9.csv")
+ca = pd.read_csv("../Sample Data/Calculators7_9.csv")
 
 n_total = 9
 n_affinity = 3
@@ -14,7 +14,7 @@ n_calculator = 1
 
 # group = grouped.get_group(27)
 # print group
-# group = group.sort_values('Visits', ascending = False)
+# group = group.sort_values('score', ascending = False)
 # print group
 
 secondary = []
@@ -38,6 +38,8 @@ for index, row in pp.iterrows():
         secondary.append(row['Parent Slug'].rpartition('/')[0])
 
 pp['secondary'] = secondary
+
+pp['count'] = [0] * len(pp)
 
 grouped = pp.groupby('Parent Slug')
 
@@ -72,7 +74,7 @@ for index, row in pp.iterrows():
 
         # calculate a list for popular
         list_popular = []
-        group_remain = group_remain.sort_values('Visits', ascending = False)    # sort group_remain by Visits to get the most popular pages
+        group_remain = group_remain.sort_values('score', ascending = False)    # sort group_remain by score to get the most popular pages
         group_remain_length = len(group_remain)
 
         if group_remain_length <= n_popular:
@@ -100,7 +102,9 @@ for index, row in pp.iterrows():
         if group_remain_length <= n_random:
             plist_random = group_remain['id'].values
         else:
-            plist_random = np.random.choice(group_remain['id'].values, n_random, replace = False)
+            group_remain = group_remain.sort_values('count', ascending = True)
+            plist_random = group_remain['id'].values[ : n_random]
+            # plist_random = np.random.choice(group_remain['id'].values, n_random, replace = False)
 
         group_remain = group_remain[~group_remain['id'].isin(plist_random)]
 
@@ -116,9 +120,17 @@ for index, row in pp.iterrows():
             if n_random-len(plist_random) >= len(sgroup_remain): 
                 slist_random = sgroup_remain['id'].values
             else:
-                slist_random = np.random.choice(sgroup_remain['id'].values, n_random - len(plist_random) , replace = False)
+                sgroup_remain = sgroup_remain.sort_values('count', ascending = True)
+                slist_random = sgroup_remain['id'].values[ : n_random - len(plist_random)]
+                # slist_random = np.random.choice(sgroup_remain['id'].values, n_random - len(plist_random) , replace = False)
             
         slist_random = np.array(slist_random)
+
+        # update count
+        pp.loc[pp['id'].isin(list_affinity), 'count'] += 1
+        pp.loc[pp['id'].isin(list_popular), 'count'] += 1
+        pp.loc[pp['id'].isin(plist_random), 'count'] += 1
+        pp.loc[pp['id'].isin(slist_random), 'count'] += 1
 
         # write row to file
         recommendations = str(list_affinity.astype(int)) + ',' + str(list_popular.astype(int)) + ',' + str(plist_random.astype(int)) + ',' + str(slist_random.astype(int)) + ',' + str(list_calculator.astype(int))
@@ -129,3 +141,4 @@ for index, row in pp.iterrows():
         f.write('%s,"%s","Missing parent id"\n' % (str(int(row['id'])), row['Title']))
 f.close()
 
+pp.to_csv('check.csv')
